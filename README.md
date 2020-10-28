@@ -7,7 +7,7 @@ This version is for review and testing purposes only.
 This version of the software requires the 'raster' package and its dependencies. 
 This version does not include the GUI functionality and the parameters have been set to the same values of the research paper.
 
-This script requires the data in the zipped folder to run. These files represent the spatial (point and image) data of a section of the model area.
+This script requires the data in the zipped folder to run. Make sure to unzip the the ReZone Data.zip These files represent the spatial (point and image) data of a section of the model area.
 
 The mining schedule has been randomly generated to simulate multiple land use conflicts. 
 
