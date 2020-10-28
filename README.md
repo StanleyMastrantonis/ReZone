@@ -1,13 +1,13 @@
 # ReZone
 ReZone is a multi-objective optimisation tool for land use allocation in multiple-use environments.
 ReZone will generate spatial outputs of landscape functional value and, using Pareto efficiency principles, determine optimal outcomes for land use allocation. 
-ReZone also includes an algorithmic tool that can aid in determining the most ideal locations for establishing offsets. 
+ReZone also includes an algorithmic tool that can aid in determining the most ideal locations for compensatory habitats. 
 
 This version is for review and testing purposes only.
 This version of the software requires the 'raster' package and its dependencies. 
 This version does not include the GUI functionality and the parameters have been set to the same values of the research paper.
 
-This script requires the data in the zipped folder to run. These files represent the spatial (point and image) data of a section of the Northern Jarrah forest of South West Western Australia.
+This script requires the data in the zipped folder to run. These files represent the spatial (point and image) data of a section of the model area.
 
 The mining schedule has been randomly generated to simulate multiple land use conflicts. 
 
