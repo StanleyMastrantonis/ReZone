@@ -1,0 +1,101 @@
+---
+title: "Pareto SCP"
+author: "Stanley Mastrantonis"
+date: "2023-05-24"
+output: html_document
+---
+
+# Libraries
+```{r, echo=FALSE}
+library(raster)
+library(Rcpp)
+library(gdistance)
+```
+# Get and set the current directory path
+
+```{r}
+current_dir <- getwd()
+setwd(current_dir)
+```
+
+#Functions
+```{r}
+source('ReZone_Functions.R') # Source the Rezone functions, please contact author for the heuristic function
+```
+
+#Study Parameters
+```{r}
+res <- 1  # Study resolution
+forage <- 75 # Set vegetation radius parameter
+buffer <- 25 # Set exponential decay buffer
+breaks <- seq(0, 1, by = 0.01)
+rbPal <- colorRampPalette(c('red','blue'))
+cols_out <- colorRampPalette(c('white',"pink", "yellow", "lime green"))(length(breaks) - 1)
+```
+
+
+#Data Read-in
+```{r}
+data_dir <- file.path(getwd(), "data")
+setwd(data_dir) # Set directory of data
+
+res_1_mat <- as.matrix(read.csv('p_res_1.csv'), rownames.force = FALSE)
+res_2_mat <- as.matrix(read.csv('p_res_2.csv'), rownames.force = FALSE)
+ac <- raster('sp_1_ac.tif')
+study_area <- as(extent(ac), 'SpatialPolygons')
+perm <- 1 - ac
+conf <- raster('conflict.tif') # Load in conflicting spatial layer
+```
+
+#Grid and Matching
+```{r}
+grid <- get_topologies(study_area, res)
+res_1_match <- grid[whichmindist_func(grid, res_1_mat),]
+res_2_match <- grid[whichmindist_func(grid, res_2_mat),]
+```
+
+
+#Kernel Function
+```{r}
+value_df <- sdf(0, forage)
+max_kern <- max_kern_func(res_1_match, res_2_match)
+```
+
+# evaluate landscape 
+```{r}
+res_val = res_value_function(res_1_match, study_grid_matrix,ac)
+max_val = landscape_value_sum(res_1_match, res_2_match, res_val)
+cell_value = cellvalue(res_1_match, res_2_match, res_val)
+```
+
+#Plot Results
+```{r}
+Col <- rbPal(50)[as.numeric(cut(cell_value$val, breaks = 50))]
+ras_value <- raster_value_func(cell_value, grid)
+plot(ras_value, interpolate = TRUE)
+points(res_1_match, cex = 1.7, pch = 20, col = 'black')
+points(res_2_match, cex = 1.7, pch = 20, col = 'blue')
+```
+
+#Least Cost Pathing
+# will print a number after each path has completed
+```{r}
+pass <- passage_func(res_1_match, res_2_match, cell_value, ras_value, perm)
+plot(pass, col = cols_out, interpolate = TRUE)
+```
+
+#Pareto Optimization
+#######IMPORTANT#######################################################
+#######click on the fontier plot to choose a land use allocation 'finish' in top right of plot
+##### run this below line of code:
+
+par_out <- pareto_func(ras_value, conf) # Read above
+
+```{r}
+plot(ras_value)
+plot(par_out, col = 'red', legend = FALSE, add = TRUE)
+```
+
+
+
+
